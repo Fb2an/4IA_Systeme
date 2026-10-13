@@ -1,6 +1,13 @@
-cmake_minimum_required(VERSION 4.3)
-project(02_DoubleLinkedList)
+cmake_minimum_required(VERSION 3.20)
 
-set(CMAKE_CXX_STANDARD 20)
+project(02_DoubleLinkedList C)
 
-add_executable(02_DoubleLinkedList main.cpp)
+set(CMAKE_C_STANDARD 11)
+
+add_executable(02_DoubleLinkedList
+        main.c
+        dll.c
+        dll.h
+        main.c
+        dll.c
+)

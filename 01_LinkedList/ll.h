@@ -2,6 +2,9 @@
 // Created by fabian on 9/16/26.
 //
 
+#ifndef LL_H
+#define LL_H
+
 #include <stdint.h>
 
 typedef struct ll {
@@ -22,3 +25,5 @@ void clear(ll_t **list);
 int8_t getAt(ll_t **list, int_fast8_t index, double* ret);
 
 int8_t setAt(ll_t **list, double data, int_fast8_t index);
+
+#endif
