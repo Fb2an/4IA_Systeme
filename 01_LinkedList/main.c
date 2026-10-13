@@ -55,10 +55,10 @@ int main(void)
     check("removeAt ausserhalb", ll_removeAt(&list, 100) == -1 &&
           equals(list, (double[]){1, 2, 3}, 3));
 
-    check("getAt (bestehende 1-basierte Semantik)",
-          ll_getAt(&list, 2, &ret) == 0 && ret == 2);
-    check("setAt (bestehende 1-basierte Semantik)",
-          ll_setAt(&list, 2.5, 2) == 0 &&
+    check("getAt (0-basiert)",
+          ll_getAt(&list, 1, &ret) == 0 && ret == 2);
+    check("setAt (0-basiert)",
+          ll_setAt(&list, 2.5, 1) == 0 &&
           equals(list, (double[]){1, 2.5, 3}, 3));
 
     check("popBack liefert letzten Wert",
