@@ -8,7 +8,7 @@
 #include <stdlib.h>
 #include <string.h>
 
-void push(ll_t **list, double data)
+void ll_push(ll_t **list, double data)
 {
     ll_t *newE = malloc(sizeof(ll_t));
     newE->data = data;
@@ -16,7 +16,7 @@ void push(ll_t **list, double data)
     *list = newE;
 }
 
-int8_t pop(ll_t** list, double* ret)
+int8_t ll_pop(ll_t** list, double* ret)
 {
     if (*list == NULL)
     {
@@ -29,7 +29,7 @@ int8_t pop(ll_t** list, double* ret)
     return 0;
 }
 
-int8_t addAt(ll_t **list, double data, int_fast8_t index)
+int8_t ll_addAt(ll_t **list, double data, uint64_t index)
 {
     if (*list == NULL)
         return -1;
@@ -42,7 +42,7 @@ int8_t addAt(ll_t **list, double data, int_fast8_t index)
         }
     } else
     {
-        for (int i = 1; i < index; i++)
+        for (int i = 0; i < index - 1; i++)
         {
             if (ptr->next != NULL)
                 ptr = ptr->next;
@@ -57,7 +57,7 @@ int8_t addAt(ll_t **list, double data, int_fast8_t index)
     return 0;
 }
 
-int8_t removeAt(ll_t **list, int_fast8_t index)
+int8_t ll_removeAt(ll_t **list, uint64_t index)
 {
     if (*list == NULL)
         return -1;
@@ -71,7 +71,7 @@ int8_t removeAt(ll_t **list, int_fast8_t index)
         }
     } else
     {
-        for (int i = 1; i < index; i++)
+        for (int i = 0; i < index - 1; i++)
         {
             ptr = ptr->next;
         }
@@ -84,7 +84,7 @@ int8_t removeAt(ll_t **list, int_fast8_t index)
     return 0;
 }
 
-void clear(ll_t **list)
+void ll_clear(ll_t **list)
 {
     while (*list != NULL)
     {
@@ -92,7 +92,7 @@ void clear(ll_t **list)
     }
 }
 
-int8_t getAt(ll_t **list, int_fast8_t index, double* ret)
+int8_t ll_getAt(ll_t **list, uint64_t index, double* ret)
 {
     if (*list == NULL)
         return -1;
@@ -116,7 +116,7 @@ int8_t getAt(ll_t **list, int_fast8_t index, double* ret)
     return 0;
 }
 
-int8_t setAt(ll_t **list, double data, int_fast8_t index)
+int8_t ll_setAt(ll_t **list, double data, uint64_t index)
 {
     if (*list == NULL)
         return -1;
