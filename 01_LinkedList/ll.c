@@ -108,8 +108,8 @@ int8_t ll_getAt(ll_t **list, uint64_t index, double *ret)
 {
     if (list == NULL || *list == NULL || ret == NULL) return -1;
     ll_t *ptr = *list;
-    // Bisheriges Verhalten beibehalten: 1 = erstes Element.
-    for (uint64_t i = 1; i < index && ptr->next != NULL; i++)
+    // 0-basierte Indizes: 0 = erstes Element.
+    for (uint64_t i = 0; i < index && ptr->next != NULL; i++)
         ptr = ptr->next;
     *ret = ptr->data;
     return 0;
@@ -119,8 +119,8 @@ int8_t ll_setAt(ll_t **list, double data, uint64_t index)
 {
     if (list == NULL || *list == NULL) return -1;
     ll_t *ptr = *list;
-    // Bisheriges Verhalten beibehalten: 1 = erstes Element.
-    for (uint64_t i = 1; i < index && ptr->next != NULL; i++)
+    // 0-basierte Indizes: 0 = erstes Element.
+    for (uint64_t i = 0; i < index && ptr->next != NULL; i++)
         ptr = ptr->next;
     ptr->data = data;
     return 0;
