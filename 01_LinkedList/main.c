@@ -1,88 +1,95 @@
-//
-// Created by fabian on 9/22/26.
-//
 #include "ll.h"
+#include <stdint.h>
 #include <stdio.h>
-#include <stdlib.h>
 #include <time.h>
 
-int main (void)
+static int tests = 0;
+static int failed = 0;
+
+static void check(const char *name, int condition)
 {
-    double ret;
+    tests++;
+    printf("[%s] %s\n", condition ? "PASS" : "FAIL", name);
+    if (!condition) failed++;
+}
 
-    // Liste initialisieren
+static int equals(const ll_t *list, const double expected[], uint64_t size)
+{
+    for (uint64_t i = 0; i < size; i++)
+    {
+        if (list == NULL || list->data != expected[i]) return 0;
+        list = list->next;
+    }
+    return list == NULL;
+}
+
+int main(void)
+{
     ll_t *list = NULL;
+    double ret = 0;
 
-    // Füge der Liste 10 Elemente hinzu
-    for (int i = 0; i < 10; i++)
-    {
-        ll_push(&list, i);
-    }
+    check("pop auf leerer Liste", ll_pop(&list, &ret) == -1);
+    check("popBack auf leerer Liste", ll_popBack(&list, &ret) == -1);
+    check("removeAt auf leerer Liste", ll_removeAt(&list, 0) == -1);
 
-    // An der 5ten Stelle eine Zahl einfügen
-    ll_addAt(&list, 5.5, 5);
-    // An der 100sten Stelle eine Zahl einfügen (sollte ans Ende geschrieben werden)
-    ll_addAt(&list, 100, 100);
-    // An einer negativen Stelle eine Zahl einfügen (sollte ans Ende geschrieben werden)
-    ll_addAt(&list, -1, -1);
+    ll_push(&list, 2);
+    ll_push(&list, 1);
+    check("push vorne", equals(list, (double[]){1, 2}, 2));
 
-    // Das 5te Element verändern
-    ll_setAt(&list, 5.55, 5);
-    // Das 100ste Element verändern (sollte das letzte Element verändern)
-    ll_setAt(&list, 100.100, 100);
-    // An einer negativen Stelle ein Element verändern (sollte das letzte Element verändern)
-    ll_setAt(&list, -1.1, -1);
+    ll_pushBack(&list, 3);
+    check("pushBack hinten", equals(list, (double[]){1, 2, 3}, 3));
 
-    // Das 5te Element ausgeben
-    ll_getAt(&list, 5, &ret);
-    printf("%f\n", ret);
-    // Das 100ste Element ausgeben (sollte das letzte Element ausgeben)
-    ll_getAt(&list, 100, &ret);
-    printf("%f\n", ret);
-    // An einer negativen Stelle ein Element ausgeben (sollte das letzte Element ausgeben)
-    ll_getAt(&list, -1, &ret);
-    printf("%f\n", ret);
+    check("addAt vorne", ll_addAt(&list, 0, 0) == 0 &&
+          equals(list, (double[]){0, 1, 2, 3}, 4));
+    check("addAt Mitte", ll_addAt(&list, 1.5, 2) == 0 &&
+          equals(list, (double[]){0, 1, 1.5, 2, 3}, 5));
+    check("addAt hinter Ende", ll_addAt(&list, 4, 100) == 0 &&
+          equals(list, (double[]){0, 1, 1.5, 2, 3, 4}, 6));
 
-    // Ausgabe der Liste
-    for (int i = 0; i < 16; i++)
-    {
-        ll_pop(&list, &ret);
-        printf("%f\n", ret);
-    }
+    check("removeAt erstes Element", ll_removeAt(&list, 0) == 0 &&
+          equals(list, (double[]){1, 1.5, 2, 3, 4}, 5));
+    check("removeAt Mitte", ll_removeAt(&list, 1) == 0 &&
+          equals(list, (double[]){1, 2, 3, 4}, 4));
+    check("removeAt letztes Element", ll_removeAt(&list, 3) == 0 &&
+          equals(list, (double[]){1, 2, 3}, 3));
+    check("removeAt ausserhalb", ll_removeAt(&list, 100) == -1 &&
+          equals(list, (double[]){1, 2, 3}, 3));
 
-    // Entfernen aller Elemente
+    check("getAt (bestehende 1-basierte Semantik)",
+          ll_getAt(&list, 2, &ret) == 0 && ret == 2);
+    check("setAt (bestehende 1-basierte Semantik)",
+          ll_setAt(&list, 2.5, 2) == 0 &&
+          equals(list, (double[]){1, 2.5, 3}, 3));
+
+    check("popBack liefert letzten Wert",
+          ll_popBack(&list, &ret) == 0 && ret == 3 &&
+          equals(list, (double[]){1, 2.5}, 2));
+    check("pop liefert ersten Wert",
+          ll_pop(&list, &ret) == 0 && ret == 1 &&
+          equals(list, (double[]){2.5}, 1));
+    check("popBack bei einem Knoten",
+          ll_popBack(&list, &ret) == 0 && ret == 2.5 && list == NULL);
+
+    ll_pushBack(&list, 7);
     ll_clear(&list);
+    check("clear leert Liste", list == NULL);
+    ll_clear(&list);
+    check("clear auf leerer Liste", list == NULL);
 
-    // Ausgabe der Liste
-    for (int i = 0; i < 16; i++)
-    {
-        ll_pop(&list, &ret);
-        printf("%f\n", ret);
-    }
-
-    // Härtetest
-    uint32_t anz = 100000000;
+    // Kleiner Benchmark statt 100 Millionen Knoten (hoher RAM-Bedarf).
+    const uint64_t anz = 100000;
     clock_t start = clock();
+    for (uint64_t i = 0; i < anz; i++) ll_push(&list, (double)i);
+    clock_t nachPush = clock();
+    for (uint64_t i = 0; i < anz; i++) ll_pop(&list, NULL);
+    clock_t nachPop = clock();
+    check("Benchmark: Liste am Ende leer", list == NULL);
 
-    for (int i = 0; i < anz; i++)
-    {
-        ll_push(&list, i);
-    }
-    clock_t ende_1 = clock();
-
-    ll_setAt(&list, 72.727272, anz-1);
-    clock_t ende_2 = clock();
-
-    for (int i = 0; i < anz; i++)
-    {
-        ll_pop(&list, &ret);
-    }
-    clock_t ende_3 = clock();
-
-    printf("\n\n\n");
-    printf("Zeit für ll_push von %hhu Elementen: %f\n", anz, (double)(ende_1 - start) / CLOCKS_PER_SEC);
-    printf("Zeit für ll_setAt vom %hhusten Element: %f\n", anz, (double)(ende_2 - ende_1) / CLOCKS_PER_SEC);
-    printf("Zeit für ll_pop von %hhu Elementen: %f\n", anz, (double)(ende_3 - ende_2) / CLOCKS_PER_SEC);
-
-
+    printf("\nTests: %d, bestanden: %d, fehlgeschlagen: %d\n",
+           tests, tests - failed, failed);
+    printf("ll_push: %.6f s, ll_pop: %.6f s (je %llu Elemente)\n",
+           (double)(nachPush - start) / CLOCKS_PER_SEC,
+           (double)(nachPop - nachPush) / CLOCKS_PER_SEC,
+           (unsigned long long)anz);
+    return failed == 0 ? 0 : 1;
 }
