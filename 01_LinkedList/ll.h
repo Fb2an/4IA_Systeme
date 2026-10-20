@@ -20,4 +20,9 @@ void ll_clear(ll_t **list);
 int8_t ll_getAt(ll_t **list, uint64_t index, double *ret);
 int8_t ll_setAt(ll_t **list, double data, uint64_t index);
 
+// Suche: Index des ersten Treffers, -1 falls nicht gefunden.
+int64_t ll_search(const ll_t *list, double data);
+// Export: malloc-Array in Listenreihenfolge; *size wird gesetzt. Mit free freigeben.
+double *ll_export(const ll_t *list, uint64_t *size);
+
 #endif

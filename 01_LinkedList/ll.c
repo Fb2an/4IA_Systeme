@@ -1,6 +1,8 @@
 #include "ll.h"
 
 #include <stdlib.h>
+#include <stdint.h>
+#include <stddef.h>
 
 void ll_push(ll_t **list, double data)
 {
@@ -109,8 +111,11 @@ int8_t ll_getAt(ll_t **list, uint64_t index, double *ret)
     if (list == NULL || *list == NULL || ret == NULL) return -1;
     ll_t *ptr = *list;
     // 0-basierte Indizes: 0 = erstes Element.
-    for (uint64_t i = 0; i < index && ptr->next != NULL; i++)
+    for (uint64_t i = 0; i < index; i++)
+    {
+        if (ptr->next == NULL) return -1;
         ptr = ptr->next;
+    }
     *ret = ptr->data;
     return 0;
 }
@@ -120,8 +125,40 @@ int8_t ll_setAt(ll_t **list, double data, uint64_t index)
     if (list == NULL || *list == NULL) return -1;
     ll_t *ptr = *list;
     // 0-basierte Indizes: 0 = erstes Element.
-    for (uint64_t i = 0; i < index && ptr->next != NULL; i++)
+    for (uint64_t i = 0; i < index; i++)
+    {
+        if (ptr->next == NULL) return -1;
         ptr = ptr->next;
+    }
     ptr->data = data;
     return 0;
+}
+
+int64_t ll_search(const ll_t *list, double data)
+{
+    int64_t index = 0;
+    while (list != NULL)
+    {
+        if (list->data == data) return index;
+        list = list->next;
+        index++;
+    }
+    return -1;
+}
+
+double *ll_export(const ll_t *list, uint64_t *size)
+{
+    if (size == NULL) return NULL;
+    *size = 0;
+    for (const ll_t *ptr = list; ptr != NULL; ptr = ptr->next) (*size)++;
+    if (*size == 0 || *size > SIZE_MAX / sizeof(double)) return NULL;
+    double *array = malloc((size_t)*size * sizeof(double));
+    if (array == NULL) return NULL;
+    uint64_t i = 0;
+    while (list != NULL)
+    {
+        array[i++] = list->data;
+        list = list->next;
+    }
+    return array;
 }
