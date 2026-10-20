@@ -2,6 +2,7 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <time.h>
+#include <stdlib.h>
 
 static int tests = 0;
 static int failed = 0;
@@ -75,6 +76,21 @@ int main(void)
     check("clear leert Liste", list == NULL);
     ll_clear(&list);
     check("clear auf leerer Liste", list == NULL);
+
+    ll_pushBack(&list, 4);
+    ll_pushBack(&list, 5);
+    check("search findet Element", ll_search(list, 5) == 1);
+    check("search nicht vorhanden", ll_search(list, 999) == -1);
+    uint64_t size = 0;
+    double *array = ll_export(list, &size);
+    check("export als Array", array != NULL && size == 2 && array[0] == 4 && array[1] == 5);
+    free(array);
+    check("getAt ausserhalb", ll_getAt(&list, 100, &ret) == -1);
+    check("setAt ausserhalb", ll_setAt(&list, 7, 100) == -1);
+    ll_clear(&list);
+    array = ll_export(list, &size);
+    check("export leere Liste", array == NULL && size == 0);
+    free(array);
 
     // Kleiner Benchmark statt 100 Millionen Knoten (hoher RAM-Bedarf).
     const uint64_t anz = 100000;
