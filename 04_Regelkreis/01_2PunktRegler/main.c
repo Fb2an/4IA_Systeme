@@ -30,6 +30,8 @@ int main ()
     // Aktuelle Innentemperatur
     double t = t0;
 
+    printf("Zeit [min];Temperatur [°C];Heizung [ein=1/aus=0]\n");
+
     for (int i = 0; i < 24 * 60; i++)
     {
         if (t <= tw - epsilon)
